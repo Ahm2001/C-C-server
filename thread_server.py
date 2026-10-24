@@ -21,7 +21,7 @@ for i in range(20):
     AGENT_STATUS.append('Offline')
     CMD_HISTORY.append([])
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='.')
 
 def handle_connection(connection, address, thread_index):
     global CMD_OUTPUT, CMD_INPUT, AGENT_STATUS
